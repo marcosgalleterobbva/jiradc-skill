@@ -6,6 +6,11 @@ The content is based on:
 - `/Users/O000142/Projects/jiradc-cli/docs/COMMAND_REFERENCE.md`
 - `/Users/O000142/Projects/jiradc-cli/jiradc_cli/main.py`
 
+Cross-check with:
+- `references/generated-command-inventory.md` for exact command flags/options.
+- `references/nl-intent-playbook.md` for intent routing and clarification rules.
+- `references/source-behavior.md` for runtime/auth/error semantics.
+
 ## Root Commands
 
 | Intent | Command template | Required | Optional |

@@ -5,7 +5,7 @@ description: Natural-language translation layer for Jira Data Center CLI (`jirad
 
 # JiraDC CLI Translator
 
-Translate Jira Data Center requests into exact `jiradc` CLI commands.
+Use this skill to translate Jira Data Center requests into exact `jiradc` commands, then summarize command results when users paste output.
 
 ## Command Surface Source
 
@@ -14,14 +14,14 @@ Translate Jira Data Center requests into exact `jiradc` CLI commands.
 - Confirm flags/arguments in `/Users/O000142/Projects/jiradc-cli/jiradc_cli/main.py` when needed.
 - External reference (only when local repo is unavailable): `https://github.com/marcosgalleterobbva/jiradc-cli`
 
-## Use This Workflow
+## Quick Start
 
-1. Classify intent and map it to a command in `references/command-map.md`.
-2. Extract all required arguments and options from the user request.
-3. Ask only for missing required values.
-4. Build one shell-ready command per user intent unless a multi-step flow is required.
-5. Prefer readable output; add `--raw` only when the user asks for JSON/full payloads.
-6. Execute commands when the user asks to run them; otherwise provide the command only.
+1. Resolve executable:
+   - Prefer `jiradc` if present in `PATH`.
+   - Fallback to `python -m jiradc_cli`.
+2. Map intent to command template using `references/command-map.md` and `references/nl-intent-playbook.md`.
+3. Validate options against `references/generated-command-inventory.md`.
+4. Execute only when the user asks to run commands. Otherwise return commands for the user to run.
 
 ## Command Translation Rules
 
@@ -32,6 +32,21 @@ Translate Jira Data Center requests into exact `jiradc` CLI commands.
 - If the user asks for a transition by name (not ID), run `jiradc issue transitions <ISSUE_KEY>` first, find the matching transition ID, then run `jiradc issue transition <ISSUE_KEY> --id <ID>`.
 - If the request is outside the implemented command surface, state that clearly and offer the closest supported `jiradc` command.
 
+## Routing And Validation
+
+- Use `references/command-map.md` for grouped command templates.
+- Use `references/nl-intent-playbook.md` for slot extraction and multi-step intent handling.
+- Validate flags/options against `references/generated-command-inventory.md` before returning final commands.
+- Use `references/source-behavior.md` for auth/session, cookie, endpoint, and error semantics.
+
+If command details are uncertain or source changed, regenerate command inventory from source:
+
+```bash
+python scripts/generate_command_inventory.py \
+  --source <PATH_TO_JIRADC_MAIN> \
+  --output references/generated-command-inventory.md
+```
+
 ## Response Format
 
 When translating, respond with:
@@ -40,7 +55,15 @@ When translating, respond with:
 2. `Command`: one fenced `bash` block.
 3. `Missing data`: only when required fields are absent.
 
-## Quick Preset Mappings
+## Execution Guidance
+
+- Prefer readable output and add `--raw` only when user asks for full JSON payloads.
+- For mutating commands, include:
+  - exact command,
+  - expected effect,
+  - one verification command where useful.
+
+## Common Mappings
 
 - "Who am I?" -> `jiradc whoami`
 - "List projects" -> `jiradc project list`
@@ -50,5 +73,3 @@ When translating, respond with:
 - "Comment on PROJ-123" -> `jiradc issue comment-add PROJ-123 --body '...'`
 - "Log work on PROJ-123" -> `jiradc issue worklog-add PROJ-123 --time-spent '1h' --comment '...'`
 - "List scrum boards" -> `jiradc agile board list --type scrum`
-
-Use `references/command-map.md` as the source of truth for command templates and required flags.

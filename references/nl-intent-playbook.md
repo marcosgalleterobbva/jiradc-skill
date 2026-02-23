@@ -33,7 +33,12 @@ Use this playbook to map user requests into concrete `jiradc` commands.
 - Ask for missing required fields in one concise question.
 - If user requests a transition by name, resolve transition ID first.
 - If user asks for board/sprint by name rather than ID, resolve ID first.
-- For mutating actions, confirm intent unless user explicitly requests immediate execution.
+- For mutating actions, confirm intent unless user explicitly asks to proceed without extra confirmation.
+
+## Codex Runtime Model
+- Never execute `jiradc` commands in Codex runtime.
+- Always provide exact command(s) for the user to run locally.
+- Ask for pasted output (terminal text or JSON) and continue from that output.
 
 ## Safe Defaults
 - Prefer read-only commands when mutation is not required.

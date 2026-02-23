@@ -1,6 +1,6 @@
 # jiradc-skill Codex Skill
 
-Codex skill for operating the `jiradc` Jira Data Center CLI from natural-language requests.
+Codex skill for translating natural-language Jira requests into `jiradc` commands that users run locally.
 
 ## What teammates need
 1. Install CLI:
@@ -18,6 +18,11 @@ Codex skill for operating the `jiradc` Jira Data Center CLI from natural-languag
 This keeps:
 - command behavior/versioning in the CLI package,
 - natural-language routing and Codex-specific instructions in the skill repo.
+
+## Codex runtime execution model
+- Do not execute `jiradc` commands in Codex runtime.
+- Always return exact commands for local execution.
+- Ask users to paste terminal output, then continue with next-step commands or summaries.
 
 ## Keeping skill and CLI aligned
 When commands change in `jiradc_cli/main.py`, refresh inventory:
@@ -39,3 +44,4 @@ After install, from Codex ask:
 - "Use jiradc-skill to list board sprints for board 12."
 
 Skill should return mapped commands such as `jiradc issue ...`, `jiradc project ...`, and `jiradc agile ...`.
+It should not execute those commands itself in Codex runtime.

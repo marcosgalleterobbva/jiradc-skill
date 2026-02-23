@@ -5,7 +5,7 @@ description: Natural-language translation layer for Jira Data Center CLI (`jirad
 
 # JiraDC CLI Translator
 
-Use this skill to translate Jira Data Center requests into exact `jiradc` commands, then summarize command results when users paste output.
+Use this skill to translate Jira Data Center requests into exact `jiradc` commands for the user to run locally, then summarize command results when users paste output.
 
 ## Command Surface Source
 
@@ -21,15 +21,15 @@ Use this skill to translate Jira Data Center requests into exact `jiradc` comman
    - Fallback to `python -m jiradc_cli`.
 2. Map intent to command template using `references/command-map.md` and `references/nl-intent-playbook.md`.
 3. Validate options against `references/generated-command-inventory.md`.
-4. Execute only when the user asks to run commands. Otherwise return commands for the user to run.
+4. Never execute `jiradc` in Codex runtime. Always return commands for the user to run locally.
 
 ## Command Translation Rules
 
 - Treat `jiradc login` as the entrypoint before authenticated commands.
 - Treat issue keys as `<PROJECT>-<NUMBER>` (example: `PROJ-123`).
 - Preserve user text exactly in quoted arguments such as `--summary`, `--description`, `--body`, `--comment`, and `--jql`.
-- For destructive or state-changing actions (`issue create`, `issue edit`, `issue comment-add`, `issue comment-update`, `issue comment-delete`, `issue attachment-add`, `issue transition`, `issue assign`, watcher/vote/worklog mutations, `issue link-create`, filter create/update, agile ranking/move/estimation-set, `logout`), confirm execution unless the user explicitly asks to run now.
-- If the user asks for a transition by name (not ID), run `jiradc issue transitions <ISSUE_KEY>` first, find the matching transition ID, then run `jiradc issue transition <ISSUE_KEY> --id <ID>`.
+- For destructive or state-changing actions (`issue create`, `issue edit`, `issue comment-add`, `issue comment-update`, `issue comment-delete`, `issue attachment-add`, `issue transition`, `issue assign`, watcher/vote/worklog mutations, `issue link-create`, filter create/update, agile ranking/move/estimation-set, `logout`), confirm intent before user execution unless the user explicitly asks to proceed.
+- If the user asks for a transition by name (not ID), provide `jiradc issue transitions <ISSUE_KEY>` first, identify the matching transition ID from user-provided output, then provide `jiradc issue transition <ISSUE_KEY> --id <ID>`.
 - If the request is outside the implemented command surface, state that clearly and offer the closest supported `jiradc` command.
 
 ## Routing And Validation
@@ -57,11 +57,25 @@ When translating, respond with:
 
 ## Execution Guidance
 
+- Never execute `jiradc` commands inside Codex runtime.
+- Always provide exact command(s) for local execution plus the key fields to paste back.
 - Prefer readable output and add `--raw` only when user asks for full JSON payloads.
 - For mutating commands, include:
   - exact command,
   - expected effect,
   - one verification command where useful.
+
+## Troubleshooting
+
+Use `references/source-behavior.md` for auth/session, endpoint, and error semantics.
+
+Codex-runtime connectivity limitation pattern:
+- `JiraTransportError` / `Request failed` / DNS resolution failures (for example `NameResolutionError`).
+
+When this happens:
+1. Do not attempt to execute `jiradc` in Codex.
+2. Provide exact `jiradc` command(s) for the user to run locally.
+3. Continue once the user shares command output.
 
 ## Common Mappings
 

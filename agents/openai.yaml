@@ -1,4 +1,4 @@
 interface:
   display_name: "JiraDC CLI Translator"
   short_description: "Translate Jira requests into jiradc commands"
-  default_prompt: "Translate natural-language Jira Data Center requests into exact jiradc CLI commands and execute them when requested."
+  default_prompt: "Translate natural-language Jira Data Center requests into exact jiradc CLI commands for the user to run locally."

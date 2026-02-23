@@ -11,6 +11,11 @@ Cross-check with:
 - `references/nl-intent-playbook.md` for intent routing and clarification rules.
 - `references/source-behavior.md` for runtime/auth/error semantics.
 
+## Codex Runtime Policy
+- Do not execute `jiradc` commands in Codex runtime.
+- Return exact command(s) for local execution.
+- Continue the workflow from user-provided command output.
+
 ## Root Commands
 
 | Intent | Command template | Required | Optional |

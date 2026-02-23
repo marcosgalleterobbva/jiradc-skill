@@ -25,6 +25,15 @@
 - `--raw` should be used when users request complete response payloads.
 - Some endpoints may return non-JSON payloads; CLI falls back to raw text output.
 
+## Codex runtime behavior
+- In Codex agent runtime, do not execute `jiradc` commands.
+- Always provide exact command(s) for the user to run locally.
+- Continue workflow after the user pastes command output.
+
+Typical connectivity failure signatures in Codex runtime:
+- `JiraTransportError: Request failed: ...`
+- DNS/host resolution failures such as `NameResolutionError`.
+
 ## Adjustment semantics for worklogs
 - `worklog-add` allows `--adjust-estimate` values: `new|leave|manual|auto`.
 - `worklog-update` allows `--adjust-estimate` values: `new|leave|auto`.
